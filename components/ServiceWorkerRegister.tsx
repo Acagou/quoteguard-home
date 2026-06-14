@@ -1,0 +1,17 @@
+"use client";
+
+import { useEffect } from "react";
+
+export function ServiceWorkerRegister() {
+  useEffect(() => {
+    if (!("serviceWorker" in navigator) || process.env.NODE_ENV !== "production") {
+      return;
+    }
+
+    navigator.serviceWorker.register("/sw.js").catch(() => {
+      // PWA install should not block the core quote-checking experience.
+    });
+  }, []);
+
+  return null;
+}

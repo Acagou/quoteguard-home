@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(191, 231, 210, 0.24), transparent 34rem),
+    linear-gradient(180deg, #fff8ed 0%, #f5efe4 52%, #ece0ce 100%);
+  color: #27231f;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: #e7d8c3;
+}
+
+.quote-grid {
+  background-image:
+    linear-gradient(rgba(23, 20, 17, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 20, 17, 0.07) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+.dark-grid {
+  background-color: #211b17;
+  background-image:
+    linear-gradient(rgba(255, 251, 243, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 251, 243, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at top right, rgba(191, 231, 210, 0.18), transparent 34rem);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.dark-nav {
+  background: rgba(33, 27, 23, 0.94);
+}
+
+.scan-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.18) 45%, transparent 58%);
+  animation: scan 4.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0%, 58% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
