@@ -22,6 +22,17 @@ OPENAI_MODEL=gpt-4.1-mini
 
 If `OPENAI_API_KEY` is not set, the quote check flow uses the local scoring fallback in `lib/report.ts`.
 
+Users can also choose **OpenAI** or **Claude** on the `/check` page and enter their own API key. Those user-entered keys are stored only in that browser's local storage and sent with the report request.
+
+Optional server fallback keys:
+
+```powershell
+OPENAI_API_KEY=your_openai_key
+OPENAI_MODEL=gpt-4.1-mini
+ANTHROPIC_API_KEY=your_anthropic_key
+ANTHROPIC_MODEL=claude-sonnet-4-5
+```
+
 ## Supabase setup
 
 Supabase is wired as an optional backend layer. The app still works without it.
@@ -56,6 +67,8 @@ Required Vercel environment variables:
 ```powershell
 OPENAI_API_KEY
 OPENAI_MODEL
+ANTHROPIC_API_KEY
+ANTHROPIC_MODEL
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ```
