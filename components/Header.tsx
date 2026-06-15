@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { Settings, ShieldCheck } from "lucide-react";
 import { InstallPwaButton } from "@/components/InstallPwaButton";
 
 export function Header() {
@@ -15,6 +15,10 @@ export function Header() {
         <nav className="flex items-center gap-3 text-sm font-semibold text-linen">
           <Link href="/sample-report" className="hidden sm:inline">
             Sample
+          </Link>
+          <Link href="/settings" className="inline-flex items-center gap-1 rounded-md border border-white/15 bg-white/10 px-3 py-2 text-paper">
+            <Settings className="h-4 w-4" />
+            <span className="hidden sm:inline">Settings</span>
           </Link>
           <InstallPwaButton />
           <Link href="/check" className="rounded-md bg-clay px-3 py-2 text-white shadow-soft">

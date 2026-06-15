@@ -1,7 +1,8 @@
-const CACHE_NAME = "quoteguard-home-v2";
+const CACHE_NAME = "quoteguard-home-v3";
 const APP_SHELL = [
   "/",
   "/check",
+  "/settings",
   "/sample-report",
   "/articles",
   "/offline",

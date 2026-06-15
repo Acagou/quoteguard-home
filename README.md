@@ -22,7 +22,7 @@ OPENAI_MODEL=gpt-4.1-mini
 
 If `OPENAI_API_KEY` is not set, the quote check flow uses the local scoring fallback in `lib/report.ts`.
 
-Users can also choose **OpenAI** or **Claude** on the `/check` page and enter their own API key. Those user-entered keys are stored only in that browser's local storage and sent with the report request.
+Users can also choose **OpenAI** or **Claude** on the `/settings` page and enter their own API key. Those user-entered keys are stored only in that browser's local storage and sent with the report request.
 
 Optional server fallback keys:
 
@@ -92,6 +92,7 @@ npx vercel env pull .env.local
 - `/` landing page
 - `/sample-report` sample drywall report
 - `/check` quote check flow
+- `/settings` user AI provider settings
 - `/report` report page shell
 - `/articles` SEO article index
 - `/articles/what-should-a-home-repair-quote-include`

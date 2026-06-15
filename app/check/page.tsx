@@ -1,12 +1,13 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, FileUp, KeyRound, Loader2, ScanLine, ShieldAlert } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, FileUp, Loader2, ScanLine, Settings, ShieldAlert } from "lucide-react";
 import { ReportView } from "@/components/ReportView";
 import { QuoteReport, SensitiveRepair } from "@/lib/report";
+import { AiProvider, getStoredAiSettings } from "@/components/AiSettingsForm";
 
 const sensitiveOptions: SensitiveRepair[] = ["water", "electrical", "gas", "roof", "mold", "structural"];
-type AiProvider = "fallback" | "openai" | "claude";
 
 export default function QuoteCheckPage() {
   const [quoteText, setQuoteText] = useState("");
@@ -26,9 +27,10 @@ export default function QuoteCheckPage() {
   const progress = [quoteText.trim().length > 20, repairType.trim().length > 1, location.trim().length > 1, true].filter(Boolean).length;
 
   useEffect(() => {
-    setAiProvider((localStorage.getItem("quoteguard.aiProvider") as AiProvider | null) ?? "fallback");
-    setApiKey(localStorage.getItem("quoteguard.apiKey") ?? "");
-    setModel(localStorage.getItem("quoteguard.model") ?? "");
+    const stored = getStoredAiSettings();
+    setAiProvider(stored.aiProvider);
+    setApiKey(stored.apiKey);
+    setModel(stored.model);
   }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -78,21 +80,6 @@ export default function QuoteCheckPage() {
     setSensitiveItems((current) => (current.includes(item) ? current.filter((entry) => entry !== item) : [...current, item]));
   }
 
-  function saveAiSettings() {
-    localStorage.setItem("quoteguard.aiProvider", aiProvider);
-    localStorage.setItem("quoteguard.apiKey", apiKey);
-    localStorage.setItem("quoteguard.model", model);
-  }
-
-  function clearAiSettings() {
-    localStorage.removeItem("quoteguard.aiProvider");
-    localStorage.removeItem("quoteguard.apiKey");
-    localStorage.removeItem("quoteguard.model");
-    setAiProvider("fallback");
-    setApiKey("");
-    setModel("");
-  }
-
   return (
     <main className="bg-linen">
       <section className="bg-night text-paper">
@@ -111,65 +98,19 @@ export default function QuoteCheckPage() {
       <div className="mx-auto grid max-w-5xl gap-5 px-4 py-5 lg:grid-cols-[1fr_22rem] lg:items-start">
         <form onSubmit={handleSubmit} className="space-y-4">
           <section className="rounded-lg border border-oat bg-paper p-4 shadow-soft md:p-5">
-            <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-md bg-night text-mint">
-                <KeyRound className="h-5 w-5" />
-              </span>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-normal text-moss">AI provider</p>
-                <h2 className="text-2xl font-bold text-ink">Use your own API key</h2>
+                <h2 className="text-2xl font-bold text-ink">{getProviderLabel(aiProvider)}</h2>
+                <p className="mt-1 text-sm leading-6 text-slateWarm">
+                  {aiProvider === "fallback" ? "Using the built-in local scoring fallback." : `Using saved ${getProviderLabel(aiProvider)} settings on this device.`}
+                </p>
               </div>
+              <Link href="/settings" className="inline-flex items-center justify-center gap-2 rounded-md bg-night px-4 py-3 text-sm font-bold text-white">
+                <Settings className="h-4 w-4" />
+                Settings
+              </Link>
             </div>
-            <p className="mt-3 text-sm leading-6 text-slateWarm">
-              Keys are saved only in this browser&apos;s local storage and sent with the report request. Use the local fallback if you do not want to add a key.
-            </p>
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              {[
-                ["fallback", "Local"],
-                ["openai", "OpenAI"],
-                ["claude", "Claude"]
-              ].map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setAiProvider(value as AiProvider)}
-                  className={`rounded-md border px-3 py-3 text-sm font-bold ${
-                    aiProvider === value ? "border-clay bg-clay text-white" : "border-oat bg-white text-ink hover:border-moss"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            {aiProvider !== "fallback" && (
-              <div className="mt-4 grid gap-3">
-                <Field label={aiProvider === "openai" ? "OpenAI API key" : "Claude API key"}>
-                  <input
-                    value={apiKey}
-                    onChange={(event) => setApiKey(event.target.value)}
-                    type="password"
-                    className="w-full rounded-md border border-oat bg-white p-4 text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-clay/10"
-                    placeholder={aiProvider === "openai" ? "sk-..." : "sk-ant-..."}
-                  />
-                </Field>
-                <Field label="Model">
-                  <input
-                    value={model}
-                    onChange={(event) => setModel(event.target.value)}
-                    className="w-full rounded-md border border-oat bg-white p-4 text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-clay/10"
-                    placeholder={aiProvider === "openai" ? "gpt-4.1-mini" : "claude-sonnet-4-5"}
-                  />
-                </Field>
-                <div className="flex gap-2">
-                  <button type="button" onClick={saveAiSettings} className="rounded-md bg-night px-4 py-3 text-sm font-bold text-white">
-                    Save on this device
-                  </button>
-                  <button type="button" onClick={clearAiSettings} className="rounded-md border border-oat px-4 py-3 text-sm font-bold text-ink">
-                    Clear
-                  </button>
-                </div>
-              </div>
-            )}
           </section>
 
           <section className="rounded-lg border border-oat bg-paper p-4 shadow-soft md:p-5">
@@ -297,6 +238,12 @@ export default function QuoteCheckPage() {
       )}
     </main>
   );
+}
+
+function getProviderLabel(provider: AiProvider) {
+  if (provider === "openai") return "OpenAI";
+  if (provider === "claude") return "Claude";
+  return "Local";
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
