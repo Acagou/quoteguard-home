@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { AiSettingsForm } from "@/components/AiSettingsForm";
+import { AppInstallPanel } from "@/components/AppInstallPanel";
 
 export default function SettingsPage() {
   return (
@@ -16,7 +17,10 @@ export default function SettingsPage() {
       </section>
 
       <div className="mx-auto max-w-3xl px-4 py-5">
-        <AiSettingsForm />
+        <div className="space-y-5">
+          <AppInstallPanel />
+          <AiSettingsForm />
+        </div>
         <Link href="/check" className="mt-5 inline-flex items-center gap-2 rounded-md bg-clay px-4 py-3 font-bold text-white">
           Check a quote
           <ArrowRight className="h-4 w-4" />
